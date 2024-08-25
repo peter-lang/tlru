@@ -17,15 +17,14 @@ pub struct Record<K, V> {
     pub access: Instant,
 }
 
-pub struct TLRUCache<K, V>
-where
-    K: Clone,
-    V: Clone,
-{
+pub struct TLRUCache<K, V> {
     expiry: Duration,
     store: HashMap<K, NodePtr<Record<K, V>>>,
     order: Queue<Record<K, V>>,
 }
+
+unsafe impl<K: Send + Clone, V: Send> Send for TLRUCache<K, V> {}
+unsafe impl<K: Sync, V: Sync> Sync for TLRUCache<K, V> {}
 
 pub struct Iter<'a, T> {
     iter: queue::Iter<'a, T>,
@@ -170,6 +169,15 @@ mod test {
     use super::TLRUCache;
 
     use mock_instant::global::MockClock;
+
+    #[test]
+    fn test_send_sync() {
+        fn is_send<T: Send>() {}
+        fn is_sync<T: Sync>() {}
+
+        is_send::<TLRUCache<Uuid, i32>>();
+        is_sync::<TLRUCache<Uuid, i32>>();
+    }
 
     #[test]
     fn test_insert() {

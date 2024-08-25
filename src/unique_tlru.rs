@@ -8,11 +8,7 @@ pub trait Key {
     fn id(&self) -> Self::K;
 }
 
-pub struct UniqueTLRUCache<K, V>
-where
-    K: Clone,
-    V: Clone + Key,
-{
+pub struct UniqueTLRUCache<K, V: Key> {
     value_ids: HashMap<V::K, K>,
     cache: TLRUCache<K, V>,
 }
@@ -104,6 +100,15 @@ mod test {
         fn id(&self) -> Self::K {
             self.0
         }
+    }
+
+    #[test]
+    fn test_send_sync() {
+        fn is_send<T: Send>() {}
+        fn is_sync<T: Sync>() {}
+
+        is_send::<UniqueTLRUCache<Uuid, MyVal>>();
+        is_sync::<UniqueTLRUCache<Uuid, MyVal>>();
     }
 
     #[test]
