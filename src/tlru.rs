@@ -123,6 +123,21 @@ where
         self
     }
 
+    pub fn vacuum_callback<F>(&mut self, mut callback: F) -> &mut Self
+    where
+        F: FnMut(Record<K, V>),
+    {
+        while let Some(Record { access, .. }) = self.order.peek() {
+            if access.elapsed() < self.expiry {
+                break;
+            }
+            let rec = self.order.pop_node().unwrap().value;
+            _ = self.store.remove(&rec.key);
+            callback(rec);
+        }
+        self
+    }
+
     pub fn iter(&self) -> Iter<Record<K, V>> {
         Iter {
             iter: self.order.iter(),
@@ -152,7 +167,7 @@ mod test {
 
     use uuid::Uuid;
 
-    use crate::tlru::TLRUCache;
+    use super::TLRUCache;
 
     use mock_instant::global::MockClock;
 

@@ -33,7 +33,7 @@ checksum = "cdcebb6db83796481097dedc7747809243cc81d9ed83e6a938b76d4ea0b249cf"
 
 [[package]]
 name = "tlru_cache"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "mock_instant",
  "uuid",
