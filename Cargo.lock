@@ -32,8 +32,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cdcebb6db83796481097dedc7747809243cc81d9ed83e6a938b76d4ea0b249cf"
 
 [[package]]
-name = "tlru"
-version = "0.1.0"
+name = "tlru_cache"
+version = "0.1.1"
 dependencies = [
  "mock_instant",
  "uuid",
